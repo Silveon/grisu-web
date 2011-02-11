@@ -3,7 +3,8 @@
 
       <!-- Inherit the core Web Toolkit stuff.                        -->
       <inherits name='com.google.gwt.user.User'/>
-
+		<inherits name='grisu.GrisuGwt' />
+	
       <!--  inherit css based theme -->
 <!--      <inherits name='com.google.gwt.user.theme.standard.Standard'/>-->
 
@@ -17,7 +18,7 @@
 
 	  <source path="client" excludes="*/*Test*.java" />
 	  
-	  <inherits name='org.vpac.grisu.GrisuGwt' />
+     
 	  
 	    <!-- Include GWTUpload library -->
  		<inherits name="gwtupload.GWTUpload"/>

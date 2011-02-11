@@ -46,6 +46,8 @@ public class GrisuClientServiceImpl extends RemoteServiceServlet implements Gris
 
 	static final Logger myLogger = Logger.getLogger(GrisuClientServiceImpl.class.getName());
 
+	
+
 	private final Mapper mapper = new DozerBeanMapper();
 
 	private final Map<String, grisu.model.dto.DtoActionStatus> actionStatus = new HashMap<String, grisu.model.dto.DtoActionStatus>();
@@ -228,7 +230,19 @@ public class GrisuClientServiceImpl extends RemoteServiceServlet implements Gris
 
 		// first check whether session is still active...
 		myLogger.debug("Trying to get serviceinterface from session.");
-
+		myLogger.debug("Have entered blank String");
+		if(StringUtils.isBlank(username))
+		{
+		username  = (String)getSession().getAttribute(MyProxyForwarderServlet.USER_NAME);
+		password = (String)getSession().getAttribute(MyProxyForwarderServlet.USER_PASS);
+		myLogger.debug("Begining Logon with Forwarded my proxy Credentials ");
+		}
+		myLogger.debug("User Name is" + username);
+		myLogger.debug("password" + password);
+		System.out.println(username);
+		System.out.println(password);
+		
+		
 		try {
 			if ( getServiceInterface() != null ) {
 				return true;
