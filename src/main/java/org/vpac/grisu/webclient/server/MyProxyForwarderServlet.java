@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import grith.sibboleth.*;
 
 import org.apache.log4j.Logger;
 import org.vpac.grisu.webclient.server.serverExceptions.MyProxyCertRequestException;
@@ -38,10 +39,11 @@ static final Logger myLogger = Logger.getLogger(GrisuClientServiceImpl.class.get
 	 	String userName = "dannyd"; //request.getParameter("userName");
 	 	String userPass = "jfk204$";//request.getParameter("userPass");
 	 	
-	 	myLogger.debug("Remote User = " + request.getRemoteUser());
-	 	myLogger.debug("Authentication TyPE = " + request.getAuthType());
-	 	myLogger.debug("Remote User = " );
 	 	myLogger.debug(request.getAttribute("Shib-Identity-Provider"));
+	 	myLogger.debug(request.getAttribute("Shib-Session-ID"));
+	 	
+	
+	 	
 	 	
 	 	HttpSession session = request.getSession();
 	 	session.setAttribute(USER_NAME, userName);
@@ -73,13 +75,13 @@ static final Logger myLogger = Logger.getLogger(GrisuClientServiceImpl.class.get
 	 	
 	 	ServletContext context = getServletContext();
 	     RequestDispatcher dispatcher = context.getRequestDispatcher("/org.vpac.grisu.webclient.Application/Application.html");
-	     if(dispatcher != null)
 	     dispatcher.forward(request,response);
 	 	
  }
  
  private String getMyProxyCert() throws MyProxyCertRequestException
  {
+	 
 	 
 	 
 	 

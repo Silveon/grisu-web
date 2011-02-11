@@ -154,6 +154,13 @@
 			<type>jar</type>
 			<scope>compile</scope>
 		</dependency>
+		<dependency>
+			<groupId>grith</groupId>
+			<artifactId>sibboleth</artifactId>
+			<version>0.3</version>
+			<type>pom</type>
+			<scope>compile</scope>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -170,7 +177,7 @@
 						<!-- </configuration> -->
 						<goals>
 							<goal>compile</goal>
-							<!-- <goal>generateAsync</goal> -->
+							<goal>generateAsync</goal>
 							<!-- <goal>test</goal> -->
 						</goals>
 
