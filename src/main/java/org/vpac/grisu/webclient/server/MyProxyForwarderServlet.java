@@ -13,28 +13,42 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import org.apache.log4j.Logger;
+import org.vpac.grisu.webclient.server.serverExceptions.ServerConfigNotFoundException;
 
 import sun.security.action.GetBooleanAction;
 
 import com.sun.corba.se.spi.activation.Server;
 
-/**
- * Servlet implementation class test
- */
 
+/**
+ * MyProxyForwarderServlet
+ *
+ *	Description : Servlet that Handles the MyProxy User Name and password for the grisu-web application.
+ *	This servlet forwards the user to lanyard via a get. Lanyard then posts the username and password to this 
+ *	Servlet. The Servlet then stores the User Name and Password in the session and forwards the User to the 
+ *	grisu-web Application
+ *	
+ *
+ * @version 0.1
+ * 
+ * @author Daniel Davidson
+ *
+ */
 public class MyProxyForwarderServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 	static final Logger myLogger = Logger
 			.getLogger(MyProxyForwarderServlet.class.getName());
-	private ServerConfiguration serverConfiguration = ServerConfiguration
-			.getInstance();
+	private ServerConfiguration serverConfiguration  = ServerConfiguration
+	.getInstance();
+	
+		
 
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
 	 *      response)
 	 * 
-	 * 	Redirect's the user to Lanyard to get the MYproxy Credentials 
+	 * 	Redirect's the user to Lanyard to get the MYProxy Credentials 
 	 * 
 	 */
 	protected void doGet(HttpServletRequest request,
@@ -46,6 +60,8 @@ public class MyProxyForwarderServlet extends HttpServlet {
 				.getConfiguration(ServerConfiguration.LANYARD_URL)
 						+ "?"+serverConfiguration.getConfiguration(ServerConfiguration.URL_PARAMETER_NAME) + "="
 						+ getURLFromRequest(request));
+		
+		// Redirects User to Lanyard
 		response.sendRedirect(serverConfiguration
 				.getConfiguration(ServerConfiguration.LANYARD_URL)
 						+ "?"+serverConfiguration.getConfiguration(ServerConfiguration.URL_PARAMETER_NAME) + "="
