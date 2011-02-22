@@ -52,6 +52,16 @@ public class GrisuClientServiceImpl extends RemoteServiceServlet implements
 	private ServerConfiguration serverConfiguration = ServerConfiguration
 			.getInstance();
 
+	// Sets the Temp Dir system property
+	{
+		myLogger.debug("Setting the Temp Dir System Property"
+				+ serverConfiguration
+						.getConfiguration(ServerConfiguration.TEMP_DIR_URL));
+		System.setProperty("java.io.tmpdir", serverConfiguration
+				.getConfiguration(ServerConfiguration.TEMP_DIR_URL));
+
+	}
+
 	private final Mapper mapper = new DozerBeanMapper();
 
 	private final Map<String, grisu.model.dto.DtoActionStatus> actionStatus = new HashMap<String, grisu.model.dto.DtoActionStatus>();
@@ -234,11 +244,12 @@ public class GrisuClientServiceImpl extends RemoteServiceServlet implements
 	public boolean login(String username, String password)
 			throws LoginException {
 
+	//	System.out.println("Temp URL is  = "+System.getProperty("java.io.tmpdir"));
 		// first check whether session is still active...
 		myLogger.debug("Trying to get serviceinterface from session.");
 		myLogger.debug("Have entered blank String");
 		if (StringUtils.isBlank(username)) {
-			
+
 			username = (String) getSession()
 					.getAttribute(
 							serverConfiguration
@@ -270,7 +281,7 @@ public class GrisuClientServiceImpl extends RemoteServiceServlet implements
 
 		// String serviceInterfaceUrl =
 		// ClientPropertiesManager.getDefaultServiceInterfaceUrl();
-		
+
 		String serviceInterfaceUrl = serverConfiguration
 				.getConfiguration(ServerConfiguration.SERVICE_INTERFACE_URL);
 
