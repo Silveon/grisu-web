@@ -13,6 +13,7 @@ import grisu.model.dto.DtoJobs;
 import grisu.model.dto.DtoStringList;
 import grisu.model.job.JobSubmissionObjectImpl;
 import grisu.settings.Environment;
+import grisu.settings.ServerPropertiesManager;
 import grisu.utils.FileHelpers;
 
 import java.io.File;
@@ -42,11 +43,14 @@ import org.vpac.grisu.webclient.client.jobmonitoring.GrisuJob;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
-public class GrisuClientServiceImpl extends RemoteServiceServlet implements GrisuClientService {
+public class GrisuClientServiceImpl extends RemoteServiceServlet implements
+		GrisuClientService {
 
-	static final Logger myLogger = Logger.getLogger(GrisuClientServiceImpl.class.getName());
+	static final Logger myLogger = Logger
+			.getLogger(GrisuClientServiceImpl.class.getName());
 
-	
+	private ServerConfiguration serverConfiguration = ServerConfiguration
+			.getInstance();
 
 	private final Mapper mapper = new DozerBeanMapper();
 
@@ -77,14 +81,15 @@ public class GrisuClientServiceImpl extends RemoteServiceServlet implements Gris
 			source = getServiceInterface().download(fileUrl).getDataSource();
 			String filename = fileUrl.substring(fileUrl.lastIndexOf("/") + 1);
 
-			File tempFile = new File(CacheFileSpace.getUploadFolderAsFile("markusTest"), filename);
+			File tempFile = new File(CacheFileSpace
+					.getUploadFolderAsFile("markusTest"), filename);
 
 			FileHelpers.saveToDisk(source, tempFile);
 			String localPath = tempFile.getAbsolutePath();
 			String url = CacheFileSpace.relativePathToWebRoot(localPath);
 
 			String mimeType = new MimetypesFileTypeMap()
-			.getContentType(tempFile);
+					.getContentType(tempFile);
 
 			newFile = new GwtGrisuCacheFile(localPath, url, mimeType, fileUrl);
 
@@ -98,9 +103,9 @@ public class GrisuClientServiceImpl extends RemoteServiceServlet implements Gris
 
 	public List<String> getAllJobnames(String application) {
 
-		return getServiceInterface().getAllJobnames(application).getStringList();
+		return getServiceInterface().getAllJobnames(application)
+				.getStringList();
 	}
-
 
 	public String[] getApplicationForExecutable(String executable) {
 
@@ -114,13 +119,13 @@ public class GrisuClientServiceImpl extends RemoteServiceServlet implements Gris
 	public DtoActionStatus getCurrentStatus(String handle) {
 
 		grisu.model.dto.DtoActionStatus status = getServiceInterface()
-		.getActionStatus(handle);
+				.getActionStatus(handle);
 
-		if ( status == null ) {
+		if (status == null) {
 			status = actionStatus.get(handle);
 		}
 
-		if ( status == null ) {
+		if (status == null) {
 			return null;
 		}
 
@@ -136,24 +141,21 @@ public class GrisuClientServiceImpl extends RemoteServiceServlet implements Gris
 		return newStatus;
 	}
 
-
 	public GrisuFileObject getFile(String url) {
 
 		return getFileSpaceManager().createFileObject(url);
 
 	}
 
-
 	private FileSpaceManager getFileSpaceManager() {
 
-		if ( fileSpaceManager == null ) {
+		if (fileSpaceManager == null) {
 			fileSpaceManager = new FileSpaceManager(getServiceInterface());
 		}
 
 		return fileSpaceManager;
 
 	}
-
 
 	public String[] getFqans() {
 
@@ -164,7 +166,8 @@ public class GrisuClientServiceImpl extends RemoteServiceServlet implements Gris
 	private InformationManager getInfoManager() {
 
 		if (infoManager == null) {
-			infoManager = new CachedMdsInformationManager(Environment.getVarGrisuDirectory().toString());
+			infoManager = new CachedMdsInformationManager(Environment
+					.getVarGrisuDirectory().toString());
 		}
 		return infoManager;
 
@@ -204,13 +207,14 @@ public class GrisuClientServiceImpl extends RemoteServiceServlet implements Gris
 			String fqan) {
 
 		SortedSet<String> result = new TreeSet<String>();
-		for ( String app : applicationNames ) {
-			String[] temp = getInfoManager().getAllVersionsOfApplicationOnGridForVO(app, fqan);
+		for (String app : applicationNames) {
+			String[] temp = getInfoManager()
+					.getAllVersionsOfApplicationOnGridForVO(app, fqan);
 			result.addAll(Arrays.asList(temp));
 
 		}
 
-		return result.toArray(new String[]{});
+		return result.toArray(new String[] {});
 
 	}
 
@@ -218,50 +222,63 @@ public class GrisuClientServiceImpl extends RemoteServiceServlet implements Gris
 
 		List<String> list = new ArrayList<String>();
 
-		for ( GrisuJob job : jobs ) {
+		for (GrisuJob job : jobs) {
 			list.add(job.getJobname());
 		}
 
-		getServiceInterface().killJobs(DtoStringList.fromStringColletion(list), true);
+		getServiceInterface().killJobs(DtoStringList.fromStringColletion(list),
+				true);
 
 	}
 
-	public boolean login(String username, String password) throws LoginException {
+	public boolean login(String username, String password)
+			throws LoginException {
 
 		// first check whether session is still active...
 		myLogger.debug("Trying to get serviceinterface from session.");
 		myLogger.debug("Have entered blank String");
-		if(StringUtils.isBlank(username))
-		{
-		username  = (String)getSession().getAttribute(MyProxyForwarderServlet.USER_NAME);
-		password = (String)getSession().getAttribute(MyProxyForwarderServlet.USER_PASS);
-		myLogger.debug("Begining Logon with Forwarded my proxy Credentials ");
+		if (StringUtils.isBlank(username)) {
+			
+			username = (String) getSession()
+					.getAttribute(
+							serverConfiguration
+									.getConfiguration(ServerConfiguration.MY_PROXY_USER_NAME_ATTRIBUTE_KEY));
+			password = (String) getSession()
+					.getAttribute(
+							serverConfiguration
+									.getConfiguration(ServerConfiguration.MY_PROXY_PASSPHRASE_ATTRIBUTE_KEY));
+			myLogger
+					.debug("Begining Logon with Forwarded my proxy Credentials ");
 		}
 		myLogger.debug("User Name is" + username);
 		myLogger.debug("password" + password);
 		System.out.println(username);
 		System.out.println(password);
-		
-		
+
 		try {
-			if ( getServiceInterface() != null ) {
+			if (getServiceInterface() != null) {
 				return true;
-			} else if ( StringUtils.isBlank(username) ) {
+			} else if (StringUtils.isBlank(username)) {
 				return false;
 			}
 
 		} catch (Exception e) {
-			myLogger.debug("Could not get serviceinterface from session: "+e.getLocalizedMessage()+". Continuing with real login process...");
+			myLogger.debug("Could not get serviceinterface from session: "
+					+ e.getLocalizedMessage()
+					+ ". Continuing with real login process...");
 		}
 
-		//		String serviceInterfaceUrl = ClientPropertiesManager.getDefaultServiceInterfaceUrl();
-
-		String serviceInterfaceUrl = "Local";
+		// String serviceInterfaceUrl =
+		// ClientPropertiesManager.getDefaultServiceInterfaceUrl();
+		
+		String serviceInterfaceUrl = serverConfiguration
+				.getConfiguration(ServerConfiguration.SERVICE_INTERFACE_URL);
 
 		myLogger.debug("Logging in...");
 
-		LoginParams loginParams = new LoginParams(
-				serviceInterfaceUrl, username, password.toCharArray(), "myproxy2.arcs.org.au", "7512");
+		LoginParams loginParams = new LoginParams(serviceInterfaceUrl,
+				username, password.toCharArray(), "myproxy2.arcs.org.au",
+				"7512");
 
 		ServiceInterface si = null;
 
@@ -303,8 +320,9 @@ public class GrisuClientServiceImpl extends RemoteServiceServlet implements Gris
 
 		List<GrisuJob> result = new ArrayList<GrisuJob>();
 
-		for ( DtoJob job : jobs.getAllJobs() ) {
-			GrisuJob grisuJob = new GrisuJob(job.getStatus(), job.propertiesAsMap());
+		for (DtoJob job : jobs.getAllJobs()) {
+			GrisuJob grisuJob = new GrisuJob(job.getStatus(), job
+					.propertiesAsMap());
 			result.add(grisuJob);
 		}
 
@@ -316,8 +334,8 @@ public class GrisuClientServiceImpl extends RemoteServiceServlet implements Gris
 
 		List<String> list = new ArrayList<String>();
 
-		for ( GrisuFileObject file : files ) {
-			if ( file.isFileOrFolder() ) {
+		for (GrisuFileObject file : files) {
+			if (file.isFileOrFolder()) {
 				list.add(file.getUrl());
 			}
 		}
@@ -334,7 +352,7 @@ public class GrisuClientServiceImpl extends RemoteServiceServlet implements Gris
 	}
 
 	public void submitJob(Map<String, String> jobProperties)
-	throws JobCreationException {
+			throws JobCreationException {
 
 		String fqan = jobProperties.get(Constants.FQAN_KEY);
 
@@ -351,7 +369,9 @@ public class GrisuClientServiceImpl extends RemoteServiceServlet implements Gris
 		JobSubmissionObjectImpl jso = new JobSubmissionObjectImpl(jobProperties);
 
 		try {
-			getServiceInterface().createJob(jso.getJobDescriptionDocumentAsString(), fqan, "force-name");
+			getServiceInterface()
+					.createJob(jso.getJobDescriptionDocumentAsString(), fqan,
+							"force-name");
 			actionStatus.remove(jobProperties.get(Constants.JOBNAME_KEY));
 		} catch (Exception e) {
 			dummyStatus.setFailed(true);
@@ -368,6 +388,5 @@ public class GrisuClientServiceImpl extends RemoteServiceServlet implements Gris
 		}
 
 	}
-
 
 }
