@@ -14,6 +14,19 @@
 		<url-pattern>/org.vpac.grisu.webclient.Application/GrisuClientService
 		</url-pattern>
 	</servlet-mapping>
+	
+	
+	<servlet>
+		<servlet-name>FileUpload</servlet-name>
+		<servlet-class>org.vpac.grisu.webclient.server.FileUploadServlet
+		</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>FileUpload</servlet-name>
+		<url-pattern>/org.vpac.grisu.webclient.Application/FileUploadServlet
+		</url-pattern>
+	</servlet-mapping>
+	
 
 	<context-param>
 		<!-- max size of the upload request -->
