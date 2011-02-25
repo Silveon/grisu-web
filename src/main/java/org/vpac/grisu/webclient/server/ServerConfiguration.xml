@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+
+<properties>
+ <comment>Server Configuration File for the grisu-web Application</comment>
+  
+  
+  <!--The key's use to store the my proxy User Name and password in the HTTP Session  -->
+  <entry key="MyProxyUserNameAttributeKey">username</entry>
+  <entry key="MyProxyPassphrasettributeKey">passphrase</entry>
+  
+  
+  <entry key="ServiceInterfaceURL">Local</entry>
+  
+  
+  <entry key="ApplicationURL">/org.vpac.grisu.webclient.Application/Application.html</entry>
+  
+  <!--  The URL Parameter Name for the lanyard  -->
+  <entry key="URL_PARAMETER_NAME">url</entry>
+  
+  <entry key="LanyardURL">https://lanyard.bestgrid.org/proxyparser/request.html</entry>
+  <entry key="TEMP_DIR_URL">/tmp/grisu/</entry>
+  
+  <!-- Grisu user file uploads are temporarily stored here -->
+  <entry key="UPLOAD_BASE_DIR_URL">/var/www/grisu/uploads</entry>
+</properties>
