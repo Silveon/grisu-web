@@ -19,37 +19,50 @@ import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 
-public class FileSelectorAndUploadWindow extends Window implements ValueChangeHandler<GrisuFileObject>, HasValueChangeHandlers<List<GrisuFileObject>> {
+public class FileSelectorAndUploadWindow extends Window implements
+		ValueChangeHandler<GrisuFileObject>,
+		HasValueChangeHandlers<List<GrisuFileObject>> {
 	private TabPanel tabPanel;
 	private TabItem tbtmSelectFile;
 	private Button addFileButton;
 	private Button closeButton;
 	private ContentPanel contentPanel;
 	private FileListPanel fileListPanel;
-	
+
 	// used to get the last used directory;
 	private String fileListName = null;
-	
+
 	SelectionListener<ButtonEvent> l = new SelectionListener<ButtonEvent>() {
 
 		@Override
 		public void componentSelected(ButtonEvent ce) {
-			
+
 			fireSelectedFileEvent(getFileListPanel_1().getSelectedItems());
-			
+
+		}
+	};
+
+	SelectionListener<ButtonEvent> uploaderListener = new SelectionListener<ButtonEvent>() {
+
+		@Override
+		public void componentSelected(ButtonEvent ce) {
+
+			fireSelectedFileEvent(getFileUploadPanel().getSelectedItems());
+
 		}
 	};
 	private TabItem tbtmUploadFile;
 	private FileUploadPanel fileUploadPanel;
+	private Button addUploadedFileButton;
 
 	public FileSelectorAndUploadWindow(String optionalFileListName) {
 		this.fileListName = optionalFileListName;
 		setHeading("File selection");
 		setLayout(new FitLayout());
-		setSize(500, 300);  
-		setPlain(true);  
-		setModal(true);  
-		setBlinkModal(true);  
+		setSize(500, 300);
+		setPlain(true);
+		setModal(true);
+		setBlinkModal(true);
 		add(getTabPanel());
 	}
 
@@ -61,6 +74,7 @@ public class FileSelectorAndUploadWindow extends Window implements ValueChangeHa
 		}
 		return tabPanel;
 	}
+
 	private TabItem getTbtmSelectFile() {
 		if (tbtmSelectFile == null) {
 			tbtmSelectFile = new TabItem("Select file");
@@ -69,18 +83,18 @@ public class FileSelectorAndUploadWindow extends Window implements ValueChangeHa
 		}
 		return tbtmSelectFile;
 	}
-	
+
 	private Button getAddFileButton() {
-		
-		if ( addFileButton == null ) {
+
+		if (addFileButton == null) {
 			addFileButton = new Button("Add", l);
 		}
 		return addFileButton;
 	}
-	
+
 	private Button getCloseButton() {
-		
-		if ( closeButton == null ) {
+
+		if (closeButton == null) {
 			closeButton = new Button("Close", l);
 			closeButton.addListener(Events.Select, new Listener<BaseEvent>() {
 
@@ -92,6 +106,7 @@ public class FileSelectorAndUploadWindow extends Window implements ValueChangeHa
 		}
 		return closeButton;
 	}
+
 	private ContentPanel getContentPanel() {
 		if (contentPanel == null) {
 			contentPanel = new ContentPanel();
@@ -105,6 +120,7 @@ public class FileSelectorAndUploadWindow extends Window implements ValueChangeHa
 		}
 		return contentPanel;
 	}
+
 	private FileListPanel getFileListPanel_1() {
 		if (fileListPanel == null) {
 			fileListPanel = new FileListPanel(null, fileListName);
@@ -112,19 +128,20 @@ public class FileSelectorAndUploadWindow extends Window implements ValueChangeHa
 		}
 		return fileListPanel;
 	}
-	
+
 	public void fireSelectedFileEvent(List<GrisuFileObject> files) {
 
 		List<GrisuFileObject> result = new ArrayList<GrisuFileObject>();
-		for ( GrisuFileObject file : files ) {
-			if ( GrisuFileObject.FILETYPE_FILE.equals(file.getFileType()) || 
-					GrisuFileObject.FILETYPE_FOLDER.equals(file.getFileType()) ) {
+		for (GrisuFileObject file : files) {
+			if (GrisuFileObject.FILETYPE_FILE.equals(file.getFileType())
+					|| GrisuFileObject.FILETYPE_FOLDER.equals(file
+							.getFileType())) {
 				result.add(file);
 			}
 		}
-		
+
 		ValueChangeEvent.fire(this, result);
-		
+
 	}
 
 	public void onValueChange(ValueChangeEvent<GrisuFileObject> arg0) {
@@ -132,7 +149,7 @@ public class FileSelectorAndUploadWindow extends Window implements ValueChangeHa
 		List<GrisuFileObject> list = new ArrayList<GrisuFileObject>();
 		list.add(arg0.getValue());
 		fireSelectedFileEvent(list);
-		
+
 	}
 
 	public HandlerRegistration addValueChangeHandler(
@@ -140,6 +157,7 @@ public class FileSelectorAndUploadWindow extends Window implements ValueChangeHa
 
 		return addHandler(arg0, ValueChangeEvent.getType());
 	}
+
 	private TabItem getTbtmUploadFile() {
 		if (tbtmUploadFile == null) {
 			tbtmUploadFile = new TabItem("Upload file");
@@ -148,10 +166,21 @@ public class FileSelectorAndUploadWindow extends Window implements ValueChangeHa
 		}
 		return tbtmUploadFile;
 	}
+
 	private FileUploadPanel getFileUploadPanel() {
 		if (fileUploadPanel == null) {
-			fileUploadPanel = new FileUploadPanel();
+			fileUploadPanel = new FileUploadPanel(getAddUplodedFileButton());
+			fileUploadPanel.setSize("482px", "202px");
 		}
 		return fileUploadPanel;
 	}
+
+	public Button getAddUplodedFileButton() {
+
+		if (addUploadedFileButton == null) {
+		addUploadedFileButton = new Button("Add Files", uploaderListener);
+	}
+		return addFileButton;
+	}
+
 }

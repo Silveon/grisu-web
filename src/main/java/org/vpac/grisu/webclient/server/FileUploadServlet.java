@@ -55,7 +55,20 @@ public class FileUploadServlet extends UploadAction {
           // File file =new File("/tmp/" + saveName);
           myLogger.debug("Uploading file " + item.getContentType());
           /// Create a temporary file placed in /tmp (only works in unix)
-           File file = File.createTempFile("upload-", ".bin", new File("/tmp/grisu"));
+          String fileURL = "/tmp/grisu/"+ request.getAttribute("Shib-Session-ID");
+          
+          File userFolder  = new File(fileURL);
+          if(!userFolder.isDirectory())
+          {
+        	  myLogger.debug("Making Dir for user " + request.getRemoteUser());
+           if(!userFolder.mkdir())
+           {
+        	   myLogger.error("Coludnt create the directory " + fileURL);
+           }
+          }
+          File file = new File(fileURL + "/"+item.getName());
+          
+         
           
           /// Create a temporary file placed in the default system temp folder
           //File file = File.createTempFile("upload-", ".bin");
@@ -70,8 +83,11 @@ public class FileUploadServlet extends UploadAction {
           response += "<file-" + cont + "-field>" + item.getFieldName() + "</file-" + cont + "-field>\n";
           response += "<file-" + cont + "-name>" + item.getName() + "</file-" + cont + "-name>\n";
           response += "<file-" + cont + "-size>" + item.getSize() + "</file-" + cont + "-size>\n";
-          response += "<file-" + cont + "-type>" + item.getContentType()+ "</file-" + cont + "type>\n";
+          response += "<file-" + cont + "-type>" + item.getContentType()+ "</file-" + cont + "-type>\n";
+          response += "<file-" + cont + "-URL>" + fileURL + "</file-" + cont + "-URL>\n";
         } catch (Exception e) {
+        	
+        	myLogger.error("Error uploading file "  + e.getMessage());
           throw new UploadActionException(e.getMessage());
         }
       }
