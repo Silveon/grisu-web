@@ -31,7 +31,9 @@ public class FileManagerPanel extends LayoutContainer implements
 
 	public static final String FILELISTPANEL_STRING = "Files";
 	public static final String PREVIEWPANEL_STRING = "Preview";
-
+	
+	
+	public static final String UPLOAD_LEFT = "UPLOAD_LEFT";
 	public final String COPY_LEFT = "COPY_LEFT";
 	public final String REFRESH_LEFT = "REFRESH_LEFT";
 	public final String REFRESH_RIGHT = "REFRESH_RIGHT";
@@ -72,6 +74,10 @@ public class FileManagerPanel extends LayoutContainer implements
 			} else if ( REFRESH_RIGHT.equals(id) ) {
 				
 			}
+			else if(UPLOAD_LEFT.equals(id))
+			{
+				
+			}
 		}
 
 	};
@@ -87,6 +93,7 @@ public class FileManagerPanel extends LayoutContainer implements
 	private FilePreviewPanel filePreviewPanel;
 	private ContentPanel rightPanel;
 	private Button toggleButton;
+	private Button leftUploadButton;
 	
 	private final String leftFilePanelName;
 	private final String rightFilePanelName;
@@ -141,6 +148,7 @@ public class FileManagerPanel extends LayoutContainer implements
 					Style.DEFAULT, 1.0, new Margins(10, 5, 10, 5)));
 			leftFileManagerPanel.setHeaderVisible(false);
 			leftFileManagerPanel.setCollapsible(false);
+			leftFileManagerPanel.addButton(getLeftUploadButton());
 			leftFileManagerPanel.addButton(getBtnRefresh());
 			leftFileManagerPanel.addButton(getCopyButtonLeft());
 		}
@@ -190,6 +198,16 @@ public class FileManagerPanel extends LayoutContainer implements
 			copyButtonLeft.setId(COPY_LEFT);
 		}
 		return copyButtonLeft;
+	}
+	
+	private Button getLeftUploadButton()
+	{
+		if(leftUploadButton == null)
+		{
+			leftUploadButton = new Button("Upload");
+			leftUploadButton.setId(UPLOAD_LEFT);			
+		}
+		return leftUploadButton;
 	}
 
 	private CardPanel getRightCardPanel() {

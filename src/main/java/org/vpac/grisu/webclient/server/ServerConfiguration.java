@@ -24,14 +24,15 @@ public class ServerConfiguration {
  public final static String MY_PROXY_PASSPHRASE_ATTRIBUTE_KEY = "MyProxyPassphrasettributeKey"; 
  public final static String SERVICE_INTERFACE_URL = "ServiceInterfaceURL"; 
  public final static String APPLICATION_URL = "ApplicationURL";
- public static final String URL_PARAMETER_NAME = "URL_PARAMETER_NAME";
+ public static final String URL_PARAMETER_NAME = "URLParameterName";
  public static final String LANYARD_URL = "LanyardURL";
- public static final String TEMP_DIR_URL = "TEMP_DIR_URL";
- public static final String UPLOAD_BASE_DIR_URL = "UPLOAD_BASE_DIR_URL";
+ public static final String TEMP_FILE_STORAGE_DIR = "TemporyFileStorageDir";
  
  private Properties properties;
  static final Logger myLogger = Logger.getLogger(ServerConfiguration.class
    .getName());
+
+
 
  
 
@@ -49,7 +50,7 @@ public class ServerConfiguration {
        + exception + "Loading Default Configuration");
    try
    {
-    properties.load(getClass().getResourceAsStream("ServerConfiguration.xml"));
+    properties.loadFromXML(getClass().getResourceAsStream("ServerConfiguration.xml"));
    }
    catch(IOException e)
    {

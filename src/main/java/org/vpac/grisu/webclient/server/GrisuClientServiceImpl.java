@@ -56,9 +56,9 @@ public class GrisuClientServiceImpl extends RemoteServiceServlet implements
 	{
 		myLogger.debug("Setting the Temp Dir System Property"
 				+ serverConfiguration
-						.getConfiguration(ServerConfiguration.TEMP_DIR_URL));
+						.getConfiguration(ServerConfiguration.TEMP_FILE_STORAGE_DIR));
 		System.setProperty("java.io.tmpdir", serverConfiguration
-				.getConfiguration(ServerConfiguration.TEMP_DIR_URL));
+				.getConfiguration(ServerConfiguration.TEMP_FILE_STORAGE_DIR));
 
 	}
 
@@ -261,6 +261,8 @@ public class GrisuClientServiceImpl extends RemoteServiceServlet implements
 			myLogger
 					.debug("Begining Logon with Forwarded my proxy Credentials ");
 		}
+		
+		
 		myLogger.debug("User Name is" + username);
 		myLogger.debug("password" + password);
 		System.out.println(username);

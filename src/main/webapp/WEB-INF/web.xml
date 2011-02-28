@@ -15,17 +15,21 @@
 		</url-pattern>
 	</servlet-mapping>
 
+	
+
 	<servlet>
 		<servlet-name>MyProxyForwarderServlet</servlet-name>
-		<servlet-class>org.vpac.grisu.webclient.server.MyProxyForwarderServlet</servlet-class>
+		<servlet-class>org.vpac.grisu.webclient.server.MyProxyForwarderServlet
+		</servlet-class>
 	</servlet>
 
 	<servlet-mapping>
 		<servlet-name>MyProxyForwarderServlet</servlet-name>
-		<url-pattern>/org.vpac.grisu.webclient.Application/MyProxyForwarderServlet</url-pattern>
+		<url-pattern>/org.vpac.grisu.webclient.Application/MyProxyForwarderServlet
+		</url-pattern>
 	</servlet-mapping>
-	
-		
+
+
 	<servlet>
 		<servlet-name>uploadServlet</servlet-name>
 		<servlet-class>org.vpac.grisu.webclient.server.FileUploadServlet
@@ -51,9 +55,9 @@
 		<param-name>slowUploads</param-name>
 		<param-value>200</param-value>
 	</context-param>
-	
-	
-	
+
+
+
 
 	<!--	<servlet>-->
 	<!--		<servlet-name>uploadServlet</servlet-name>-->

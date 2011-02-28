@@ -53,6 +53,7 @@ import com.extjs.gxt.ui.client.widget.layout.FormLayout;
 import com.extjs.gxt.ui.client.widget.layout.RowData;
 import com.extjs.gxt.ui.client.widget.layout.RowLayout;
 import com.extjs.gxt.ui.client.widget.layout.TableData;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.Timer;
@@ -1048,8 +1049,11 @@ ValueChangeHandler<List<GrisuFileObject>> {
 
 	public void onValueChange(ValueChangeEvent<List<GrisuFileObject>> arg0) {
 
+		GWT.log("Changed value ");
+		
 		for (GrisuFileObject file : arg0.getValue()) {
 
+			GWT.log("Adding Value" + file.getFileName());
 			if (!inputFileStore.contains(file)) {
 				inputFileStore.add(file);
 			}

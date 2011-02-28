@@ -1,5 +1,8 @@
 package org.vpac.grisu.webclient.server;
 
+import grisu.control.ServiceInterface;
+import grisu.model.FileManager;
+import grisu.model.GrisuRegistryManager;
 import gwtupload.server.UploadAction;
 import gwtupload.server.exceptions.UploadActionException;
 
@@ -11,8 +14,11 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
 import org.apache.commons.fileupload.FileItem;
 import org.apache.log4j.Logger;
+import org.vpac.grisu.webclient.client.files.GrisuFileObject;
 
 
 
@@ -54,24 +60,11 @@ public class FileUploadServlet extends UploadAction {
           // String saveName = item.getName().replaceAll("[\\\\/><\\|\\s\"'{}()\\[\\]]+", "_");
           // File file =new File("/tmp/" + saveName);
           myLogger.debug("Uploading file " + item.getContentType());
+        
+          
+          
           /// Create a temporary file placed in /tmp (only works in unix)
-          String fileURL = "/tmp/grisu/"+ request.getAttribute("Shib-Session-ID");
-          
-          File userFolder  = new File(fileURL);
-          if(!userFolder.isDirectory())
-          {
-        	  myLogger.debug("Making Dir for user " + request.getRemoteUser());
-           if(!userFolder.mkdir())
-           {
-        	   myLogger.error("Coludnt create the directory " + fileURL);
-           }
-          }
-          File file = new File(fileURL + "/"+item.getName());
-          
-         
-          
-          /// Create a temporary file placed in the default system temp folder
-          //File file = File.createTempFile("upload-", ".bin");
+          File file = File.createTempFile("upload-", ".bin", new File(ServerConfiguration.getInstance().getConfiguration(ServerConfiguration.TEMP_FILE_STORAGE_DIR)));
           item.write(file);
           
           myLogger.debug("Finished uploading file " + item.getContentType());
@@ -79,12 +72,18 @@ public class FileUploadServlet extends UploadAction {
           receivedFiles.put(item.getFieldName(), file);
           receivedContentTypes.put(item.getFieldName(), item.getContentType());
           
+          
+          
+//          ServiceInterface serviceInterface = getServiceInterface(request.getSession());
+//          FileManager fm = GrisuRegistryManager.getDefault(serviceInterface).getFileManager();
+//          
+//          File cache = fm.getLocalCacheFile(target);
+          
           /// Compose a xml message with the full file information which can be parsed in client side
           response += "<file-" + cont + "-field>" + item.getFieldName() + "</file-" + cont + "-field>\n";
           response += "<file-" + cont + "-name>" + item.getName() + "</file-" + cont + "-name>\n";
           response += "<file-" + cont + "-size>" + item.getSize() + "</file-" + cont + "-size>\n";
           response += "<file-" + cont + "-type>" + item.getContentType()+ "</file-" + cont + "-type>\n";
-          response += "<file-" + cont + "-URL>" + fileURL + "</file-" + cont + "-URL>\n";
         } catch (Exception e) {
         	
         	myLogger.error("Error uploading file "  + e.getMessage());
@@ -100,6 +99,17 @@ public class FileUploadServlet extends UploadAction {
     return "<response>\n" + response + "</response>\n";
   }
   
+  
+	private ServiceInterface getServiceInterface(HttpSession session) {
+
+		ServiceInterface si = (ServiceInterface) (session
+				.getAttribute("serviceInterface"));
+		if (si == null) {
+			myLogger.error("ServiceInterface not in session (yet?).");
+			throw new RuntimeException("Not logged in.");
+		}
+		return si;
+	}
   /**
    * Get the content of an uploaded file.
    */

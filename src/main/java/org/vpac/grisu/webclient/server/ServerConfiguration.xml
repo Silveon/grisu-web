@@ -16,11 +16,9 @@
   <entry key="ApplicationURL">/org.vpac.grisu.webclient.Application/Application.html</entry>
   
   <!--  The URL Parameter Name for the lanyard  -->
-  <entry key="URL_PARAMETER_NAME">url</entry>
+  <entry key="URLParameterName">url</entry>
   
   <entry key="LanyardURL">https://lanyard.bestgrid.org/proxyparser/request.html</entry>
-  <entry key="TEMP_DIR_URL">/tmp/grisu/</entry>
-  
-  <!-- Grisu user file uploads are temporarily stored here -->
-  <entry key="UPLOAD_BASE_DIR_URL">/var/www/grisu/uploads</entry>
+	<entry key="TemporyFileStorageDir">/tmp/grisu/</entry>
+	
 </properties>

@@ -115,6 +115,7 @@ public class FileTransferObject extends BaseModel {
 		});
 
 		FileTransferStartedEvent startEvent = new FileTransferStartedEvent(this);
+		
 		EventBus.get().fireEvent(startEvent);
 
 		return true;
