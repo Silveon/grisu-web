@@ -45,5 +45,7 @@ public interface GrisuClientServiceAsync {
 	public void setUserProperty(String key, String value, AsyncCallback<Void> callback);
 
 	public void submitJob(Map<String, String> jobProperties, AsyncCallback<Void> callback);
+	
+	public void uploadFileToGrid(GrisuFileObject gfo ,String targetURL,boolean overwrite, AsyncCallback<Boolean> callback);
 
 }

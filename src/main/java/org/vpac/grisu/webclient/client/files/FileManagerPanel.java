@@ -99,6 +99,7 @@ public class FileManagerPanel extends LayoutContainer implements
 	private final String rightFilePanelName;
 
 	private String currentPanel = FILELISTPANEL_STRING;
+	private FileUploaderWindow fileUploaderWindow;
 
 //	public FileManagerPanel() {
 //		this(null, null, null);
@@ -205,11 +206,28 @@ public class FileManagerPanel extends LayoutContainer implements
 		if(leftUploadButton == null)
 		{
 			leftUploadButton = new Button("Upload");
+			leftUploadButton.addSelectionListener(new SelectionListener<ButtonEvent>() {
+				public void componentSelected(ButtonEvent ce)
+				{
+					
+					getFileUploaderWindow(getLeftFileListPanel().getCurrentDirectory().getUrl());
+				}
+
+				
+			});
 			leftUploadButton.setId(UPLOAD_LEFT);			
 		}
 		return leftUploadButton;
 	}
 
+	private void getFileUploaderWindow(String gridTargetURL) {
+		if(fileUploaderWindow == null)
+		{
+			fileUploaderWindow = new FileUploaderWindow();
+		}
+		fileUploaderWindow.setTargetURL(gridTargetURL);
+		
+	}
 	private CardPanel getRightCardPanel() {
 		if (rightCardPanel == null) {
 			rightCardPanel = new CardPanel();

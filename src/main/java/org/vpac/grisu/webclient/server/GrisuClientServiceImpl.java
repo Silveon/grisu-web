@@ -4,10 +4,13 @@ import grisu.client.model.dto.DtoActionStatus;
 import grisu.control.ServiceInterface;
 import grisu.control.exceptions.RemoteFileSystemException;
 import grisu.control.info.CachedMdsInformationManager;
+import grisu.frontend.control.clientexceptions.FileTransactionException;
 import grisu.frontend.control.login.LoginParams;
 import grisu.frontend.control.login.ServiceInterfaceFactory;
 import grisu.jcommons.constants.Constants;
 import grisu.jcommons.interfaces.InformationManager;
+import grisu.model.FileManager;
+import grisu.model.GrisuRegistryManager;
 import grisu.model.dto.DtoJob;
 import grisu.model.dto.DtoJobs;
 import grisu.model.dto.DtoStringList;
@@ -400,6 +403,24 @@ public class GrisuClientServiceImpl extends RemoteServiceServlet implements
 			throw new RuntimeException(e.getLocalizedMessage());
 		}
 
+	}
+
+	public boolean uploadFileToGrid(GrisuFileObject gfo , String target, boolean overwrite) {
+		
+		   ServiceInterface serviceInterface = getServiceInterface();
+	         FileManager fm = GrisuRegistryManager.getDefault(serviceInterface).getFileManager();
+	        try {
+	        	
+	        	File file  = new File(gfo.getUrl());
+	        	
+				fm.uploadFile(file, target+gfo.getFileName(), overwrite);
+			} 
+	        catch (FileTransactionException e) {
+				// TODO Auto-generated catch block
+				myLogger.error("Error uploding file to Grid "  + e.getMessage());
+				return false;
+			}
+	        return true;
 	}
 
 }
