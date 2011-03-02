@@ -32,7 +32,7 @@
 
 	<servlet>
 		<servlet-name>uploadServlet</servlet-name>
-		<servlet-class>org.vpac.grisu.webclient.server.FileUploadServlet
+		<servlet-class>org.vpac.grisu.webclient.server.FileUploadToWebPortalServlet
 		</servlet-class>
 	</servlet>
 	<servlet-mapping>

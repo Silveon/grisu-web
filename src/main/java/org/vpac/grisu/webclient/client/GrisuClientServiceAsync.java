@@ -2,6 +2,7 @@ package org.vpac.grisu.webclient.client;
 
 import grisu.client.model.dto.DtoActionStatus;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -46,6 +47,6 @@ public interface GrisuClientServiceAsync {
 
 	public void submitJob(Map<String, String> jobProperties, AsyncCallback<Void> callback);
 	
-	public void uploadFileToGrid(GrisuFileObject gfo ,String targetURL,boolean overwrite, AsyncCallback<Boolean> callback);
+	public void uploadFilesToGrid(List<GrisuFileObject> gfol,String targetURL,boolean overwrite, AsyncCallback<HashMap<String,String>> callback);
 
 }

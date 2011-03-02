@@ -3,37 +3,44 @@ package org.vpac.grisu.webclient.client.files;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.vpac.grisu.webclient.client.files.FileUploadPanel.UploadFilePanelType;
+
+import com.extjs.gxt.ui.client.Style.Scroll;
 import com.extjs.gxt.ui.client.event.ButtonEvent;
+import com.extjs.gxt.ui.client.event.ComponentEvent;
 import com.extjs.gxt.ui.client.event.SelectionListener;
-import com.extjs.gxt.ui.client.widget.Component;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
+import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.TabItem;
 import com.extjs.gxt.ui.client.widget.TabPanel;
 import com.extjs.gxt.ui.client.widget.Window;
 import com.extjs.gxt.ui.client.widget.button.Button;
+import com.extjs.gxt.ui.client.widget.form.FormPanel;
 import com.extjs.gxt.ui.client.widget.layout.FitLayout;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
-import com.google.gwt.event.dom.client.HasChangeHandlers;
 import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.user.client.ui.AbstractImagePrototype;
-import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.FileUpload;
 
 
-public class FileUploaderWindow extends Window  implements
-		ValueChangeHandler<GrisuFileObject>, HasValueChangeHandlers<List<GrisuFileObject>> {
+
+public class FileUploaderWindow extends Window  {
 
 	
 	private TabPanel tabPanel;
 	private TabItem tbtmUploadFile;
+	private TabItem tbtmRedyFiles;
 	private ContentPanel uploadFileContentPanel;
+	private ContentPanel uploadRedyToBeSentContentPanel;
 	private FileUploadPanel fileUploadPanel;
-	private Button addUploadedFileButton;
-	
+	private Button beginTransferButton;
+	private Button hideButton;
 	
 	
 	private SelectionListener<ButtonEvent> uploaderButtonListener = new SelectionListener<ButtonEvent>() {
@@ -41,16 +48,17 @@ public class FileUploaderWindow extends Window  implements
 		@Override
 		public void componentSelected(ButtonEvent ce) {
 
-			
-			fireSelectedFileEvent(getFileUploadPanel().getSelectedItems());
-
+			beginTransferToGrid();
 		}
 
 	
 	};
 	
-	private static FileUploaderWindow fileUploaderWindow = null;
+	
 	private String targetURL;
+	private FileUploadSelectorGridPanel fileUploadSelectorPanel;
+	private FileUpload fileUpload;
+	private FormPanel formPanel;
 
 	public FileUploaderWindow()
 	{
@@ -62,6 +70,7 @@ public class FileUploaderWindow extends Window  implements
 		setModal(true);
 		setBlinkModal(true);
 		add(getTabPanel());
+		
 	}
 	
 	
@@ -72,78 +81,95 @@ public class FileUploaderWindow extends Window  implements
 		if (tabPanel == null) {
 			tabPanel = new TabPanel();
 			tabPanel.add(getTbtmUploadFile());
+			
 		}
 		return tabPanel;
 	}
+
 	private TabItem getTbtmUploadFile() {
 		if (tbtmUploadFile == null) {
-			tbtmUploadFile = new TabItem("Select file");
+			tbtmUploadFile = new TabItem("Upload Files");
 			tbtmUploadFile.setLayout(new FitLayout());
-			tbtmUploadFile.add(getContentPanel());
+			tbtmUploadFile.add(getUploadFileContentPanel());
 		}
 		return tbtmUploadFile;
 	}
-	private ContentPanel getContentPanel() {
+
+	private ContentPanel getUploadFileContentPanel() {
 		if (uploadFileContentPanel == null) {
 			uploadFileContentPanel = new ContentPanel();
 			uploadFileContentPanel.setHeaderVisible(false);
 			uploadFileContentPanel.setBodyBorder(false);
 			uploadFileContentPanel.setLayout(new FitLayout());
-			uploadFileContentPanel.add(getFileUploadPanel());
+			uploadFileContentPanel.add(getFileuploadPanel());
 			uploadFileContentPanel.setCollapsible(true);
-			uploadFileContentPanel.addButton(getAddUplodedFileButton());
+			
+			uploadFileContentPanel.addButton(getBeginTransferButton());
+			
 		}
 		return uploadFileContentPanel;
 	}
 	
 	
-	private FileUploadPanel getFileUploadPanel()
-	{
-		if (fileUploadPanel == null) {
-			fileUploadPanel = new FileUploadPanel(getTargetURL());
-			fileUploadPanel.setSize("482px", "202px");
-			
-		}
-		return fileUploadPanel;
-	}
-	
-	
-	private Button getAddUplodedFileButton() 
-	{
-		if (addUploadedFileButton == null) {
-			addUploadedFileButton = new Button("Add Files", uploaderButtonListener);
-		}
-			return addUploadedFileButton;
-	}
 
-	
-	public void fireSelectedFileEvent(List<GrisuFileObject> files) {
 
-		
-		GWT.log("fired secleted Event Handle");
-		List<GrisuFileObject> result = new ArrayList<GrisuFileObject>();
-		for (GrisuFileObject file : files) {
+ 
+
+private Button getHidebutton() {
+	
+	if (hideButton == null) {
+		hideButton = new Button("Upload to Grid" , new SelectionListener<ButtonEvent>() {
 			
-			GWT.log("Iterating throu files current file"  + file.getFileName() );
-			GWT.log("File type " + file.getFileType());
-			if (GrisuFileObject.FILETYPE_FILE.equals(file.getFileType())
-					|| GrisuFileObject.FILETYPE_FOLDER.equals(file
-							.getFileType())) {
-				result.add(file);
+			@Override
+			public void componentSelected(ButtonEvent ce) {
+				
+				
 			}
-		}
-        
-		GWT.log("Result Size is = " + result.size());
-		ValueChangeEvent.fire(this,result);
-
+		});
 	}
+		return hideButton;
+	}
+
+
+
+
+//	private FileUploadPanel getFileUploadPanel()
+//	{
+//		if (fileUploadPanel == null) {
+//			fileUploadPanel = new FileUploadPanel(UploadFilePanelType.GRID_UPLOAD);
+//			fileUploadPanel.setSize("482px","202px");
+//			
+//		}
+//		
+//		fileUploadPanel.setPathToUploadTo(getTargetURL());
+//		setHeading("Select file to Upload to" + getTargetURL());
+//		
+//		
+//		return fileUploadPanel;
+//	}
+//	
+	
+	
+
+
+
+	private Button getBeginTransferButton() 
+	{
+		if (beginTransferButton == null) {
+			beginTransferButton = new Button("Upload to Grid", uploaderButtonListener);
+		}
+			return beginTransferButton;
+	}
+
+	
+	
 	public void fireEvent(GwtEvent<?> arg0) {
 		// TODO Auto-generated method stub
 
 	}
 
-	public void onValueChange(ValueChangeEvent<GrisuFileObject> arg0) {
-		// TODO Auto-generated method stub
+	public void onValueChange(ValueChangeEvent<List<GrisuFileObject>> arg0) {
+		
 		
 	}
 	public HandlerRegistration addValueChangeHandler(
@@ -155,6 +181,19 @@ public class FileUploaderWindow extends Window  implements
 
 
 
+	public void beginTransferToGrid()
+	{
+		
+			FileTransferObject fto = new FileTransferObject(getFileuploadPanel().getSelectedItems(),new GrisuFileObject(targetURL,targetURL,GrisuFileObject.FILETYPE_FOLDER,new Long(-1),null ));
+			if(fto.startTransfer())
+			{
+				Info.display("Beginging Transfer ", "Transfer to grid has successfully started");
+			}
+			else
+			{
+				Info.display("Error ", "Transfer to grid has not started");
+			}
+	}
 
 
 
@@ -172,6 +211,25 @@ public class FileUploaderWindow extends Window  implements
 		return targetURL;
 	}
 	
+	
+	
+	
+	private FileUploadPanel getFileuploadPanel()
+	{
+		if(fileUploadPanel == null)
+		{
+			fileUploadPanel = new FileUploadPanel(UploadFilePanelType.GRID_UPLOAD);
+			fileUploadPanel.setSize("482px","50px");
+			
+			fileUploadPanel.setScrollMode(Scroll.AUTO);
+			
+		}
+		
+		return fileUploadPanel;
+	}
+	
+	
+
 	
 
 }

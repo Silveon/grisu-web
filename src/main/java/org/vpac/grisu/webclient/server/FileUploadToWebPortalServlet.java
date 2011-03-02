@@ -62,9 +62,16 @@ public class FileUploadToWebPortalServlet extends UploadAction {
           myLogger.debug("Uploading file " + item.getContentType());
         
           
+          String shibSession = request.getParameter("Shib-Session-ID");
           
+          File fileDirectory = new File(ServerConfiguration.getInstance().getConfiguration(ServerConfiguration.TEMP_FILE_STORAGE_DIR)+shibSession);
+          if(!fileDirectory.exists())
+          {
+        	  fileDirectory.mkdir();
+        	  myLogger.debug("Creating user temp Directory" + fileDirectory.getAbsolutePath());
+          }
           /// Create a temporary file placed in /tmp (only works in unix)
-          File file = File.createTempFile("upload-", ".bin", new File(ServerConfiguration.getInstance().getConfiguration(ServerConfiguration.TEMP_FILE_STORAGE_DIR)));
+          File file = File.createTempFile("upload-", ".bin",fileDirectory);
           item.write(file);
           
           myLogger.debug("Finished uploading file " + item.getContentType());
@@ -72,11 +79,19 @@ public class FileUploadToWebPortalServlet extends UploadAction {
           receivedFiles.put(item.getFieldName(), file);
           receivedContentTypes.put(item.getFieldName(), item.getContentType());
           
+          
+          
+      
+         
+         
+          
           /// Compose a xml message with the full file information which can be parsed in client side
           response += "<file-" + cont + "-field>" + item.getFieldName() + "</file-" + cont + "-field>\n";
           response += "<file-" + cont + "-name>" + item.getName() + "</file-" + cont + "-name>\n";
           response += "<file-" + cont + "-size>" + item.getSize() + "</file-" + cont + "-size>\n";
           response += "<file-" + cont + "-type>" + item.getContentType()+ "</file-" + cont + "-type>\n";
+          response += "<file-" + cont + "-URI>" + file.toURI().toString()+ "</file-" + cont + "-URI>\n";
+          response = file.toURI().toString();
         } catch (Exception e) {
         	
         	myLogger.error("Error uploading file "  + e.getMessage());
@@ -90,7 +105,7 @@ public class FileUploadToWebPortalServlet extends UploadAction {
     
     
     /// Send information of the received files to the client.
-    return "<response>\n" + response + "</response>\n";
+    return response;
   }
   
   

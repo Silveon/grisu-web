@@ -29,6 +29,7 @@ import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import javax.activation.MimetypesFileTypeMap;
 import javax.servlet.http.HttpSession;
@@ -76,6 +77,7 @@ public class GrisuClientServiceImpl extends RemoteServiceServlet implements
 	public String cp(List<String> sources, String target) {
 
 		DtoStringList dtoSources = DtoStringList.fromStringList(sources);
+		
 		String handle = null;
 		try {
 			handle = getServiceInterface().cp(dtoSources, target, true, false);
@@ -405,22 +407,33 @@ public class GrisuClientServiceImpl extends RemoteServiceServlet implements
 
 	}
 
-	public boolean uploadFileToGrid(GrisuFileObject gfo , String target, boolean overwrite) {
+	
+	 
+
+	public HashMap<String,String> uploadFilesToGrid(List<GrisuFileObject> gfol , String target, boolean overwrite) {
 		
 		   ServiceInterface serviceInterface = getServiceInterface();
+		   
+		
 	         FileManager fm = GrisuRegistryManager.getDefault(serviceInterface).getFileManager();
+	         HashMap<String,String> failedFilesMap = new HashMap<String,String>();
+	         for(GrisuFileObject gfo : gfol)
+	         {
 	        try {
 	        	
 	        	File file  = new File(gfo.getUrl());
 	        	
 				fm.uploadFile(file, target+gfo.getFileName(), overwrite);
+				
+				
 			} 
 	        catch (FileTransactionException e) {
 				// TODO Auto-generated catch block
 				myLogger.error("Error uploding file to Grid "  + e.getMessage());
-				return false;
-			}
-	        return true;
+				failedFilesMap.put(gfo.getFileName(), e.getMessage());
+				
+			}}
+	        return failedFilesMap;
 	}
 
 }

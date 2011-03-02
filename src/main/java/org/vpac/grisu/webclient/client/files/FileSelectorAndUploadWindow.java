@@ -3,6 +3,8 @@ package org.vpac.grisu.webclient.client.files;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.vpac.grisu.webclient.client.files.FileUploadPanel.UploadFilePanelType;
+
 import com.extjs.gxt.ui.client.event.BaseEvent;
 import com.extjs.gxt.ui.client.event.ButtonEvent;
 import com.extjs.gxt.ui.client.event.Events;
@@ -198,7 +200,7 @@ public class FileSelectorAndUploadWindow extends Window implements
 
 	private FileUploadPanel getFileUploadPanel() {
 		if (fileUploadPanel == null) {
-			fileUploadPanel = new FileUploadPanel();
+			fileUploadPanel = new FileUploadPanel(UploadFilePanelType.JOB_SUBMISSION_UPLOAD);
 			fileUploadPanel.setSize("482px", "202px");
 			
 		}

@@ -210,7 +210,8 @@ public class FileManagerPanel extends LayoutContainer implements
 				public void componentSelected(ButtonEvent ce)
 				{
 					
-					getFileUploaderWindow(getLeftFileListPanel().getCurrentDirectory().getUrl());
+					getFileUploaderWindow(getLeftFileListPanel().getCurrentDirectory().getUrl()).show();
+					
 				}
 
 				
@@ -220,12 +221,14 @@ public class FileManagerPanel extends LayoutContainer implements
 		return leftUploadButton;
 	}
 
-	private void getFileUploaderWindow(String gridTargetURL) {
+	private FileUploaderWindow getFileUploaderWindow(String gridTargetURL) {
 		if(fileUploaderWindow == null)
 		{
 			fileUploaderWindow = new FileUploaderWindow();
 		}
 		fileUploaderWindow.setTargetURL(gridTargetURL);
+		
+		return fileUploaderWindow;
 		
 	}
 	private CardPanel getRightCardPanel() {

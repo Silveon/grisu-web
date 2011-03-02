@@ -3,6 +3,7 @@ package org.vpac.grisu.webclient.client;
 import grisu.client.model.dto.DtoActionStatus;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -31,7 +32,7 @@ public interface GrisuClientService extends RemoteService {
 		}
 	}
 
-	public boolean uploadFileToGrid(GrisuFileObject gfo ,String targetURL,boolean overwrite);
+	public HashMap<String,String> uploadFilesToGrid(List<GrisuFileObject> gfol ,String targetURL,boolean overwrite);
 	
 	public String cp(List<String> sources, String target);
 

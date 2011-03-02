@@ -25,12 +25,12 @@ public class FileTransferObject extends BaseModel {
 	public static final String STATUS_KEY = "status";
 	public static final String STARTED_KEY = "started";
 
-	private final List<GrisuFileObject> sources;
-	private final GrisuFileObject target;
+	protected final List<GrisuFileObject> sources;
+	protected final GrisuFileObject target;
 
-	private Boolean started = false;
+	protected Boolean started = false;
 
-	private String handle = null;
+	protected String handle = null;
 	private DtoActionStatus currentStatus = null;
 	private Date lastStatusUpdate = null;
 
@@ -95,7 +95,7 @@ public class FileTransferObject extends BaseModel {
 
 			sourceNames.add(file.getUrl());
 		}
-
+		
 		GrisuClientService.Util.getInstance().cp(sourceNames, target.getUrl(), new AsyncCallback<String>() {
 
 			public void onFailure(Throwable arg0) {
