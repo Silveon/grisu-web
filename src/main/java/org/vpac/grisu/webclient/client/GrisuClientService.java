@@ -32,7 +32,7 @@ public interface GrisuClientService extends RemoteService {
 		}
 	}
 
-	public HashMap<String,String> uploadFilesToGrid(List<GrisuFileObject> gfol ,String targetURL,boolean overwrite);
+	public String uploadFilesToGrid(List<GrisuFileObject> gfol ,String targetURL,boolean overwrite);
 	
 	public String cp(List<String> sources, String target);
 

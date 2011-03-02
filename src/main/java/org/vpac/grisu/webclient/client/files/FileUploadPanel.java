@@ -14,6 +14,7 @@ import gwtupload.client.IUploader;
 import gwtupload.client.MultiUploader;
 import gwtupload.client.PreloadedImage;
 import gwtupload.client.IUploadStatus.Status;
+import gwtupload.client.IUploader.OnChangeUploaderHandler;
 import gwtupload.client.IUploader.OnStartUploaderHandler;
 import gwtupload.client.IUploader.Utils;
 import com.extjs.gxt.ui.client.Style.Orientation;
@@ -58,10 +59,28 @@ public class FileUploadPanel extends LayoutContainer implements HasHandlers
 		add(getMultiUploader(), new RowData(1.0, 1.0, new Margins()));
 		// add(getFileUploadModule(), new RowData(1.0, 1.0, new Margins()));
 		multiUploader.setEnabled(true);
+		
 		getMultiUploader().addOnFinishUploadHandler(onFinishUploaderHandler);
 		multiUploader.addOnStartUploadHandler(onStartUploaderHandler);
 		
+		multiUploader.addOnChangeUploadHandler(new OnChangeUploaderHandler() {
+			
+			public void onChange(IUploader uploader) {
+				// 
+				if (uploader.getStatus() == Status.DELETED)
+				{
+					uploadedFilesMap.remove(uploader.fileUrl());
+					GWT.log("Removing Uploaded File :" + uploader.fileUrl());
+				}
+			}
+		});
 		
+		
+	}
+	
+	public void reset()
+	{
+		multiUploader.reset();
 	}
 	
 	
@@ -122,11 +141,7 @@ public class FileUploadPanel extends LayoutContainer implements HasHandlers
 				
 				
 			}
-			else if (uploader.getStatus() == Status.DELETED)
-			{
-				uploadedFilesMap.remove(uploader.fileUrl());
-				GWT.log("Removing Uploaded File :" + uploader.fileUrl());
-			}
+			
 		}
 	};
 

@@ -65,6 +65,9 @@ JobSubmissionFinishedEvent.Handler,
 ValueChangeHandler<List<GrisuFileObject>> {
 
 	public static final String NOT_AVAILABLE_STRING = "Not available";
+	public static final String GENERIC_JOB_LAST_INPUTFILE_URL = "generic last input file url";
+	public static final String DEFAULT_VERSION = "default version";
+	private static final String GENERIC_JOB_LAST_WALLTIME_IN_MINUTES = "generic last walltime";
 
 	private static final boolean isDesignTime() {
 		return false;
@@ -127,7 +130,7 @@ ValueChangeHandler<List<GrisuFileObject>> {
 		add(getFrmpnlCreateJob(), new FitData(0));
 
 		fileSelectorWindow = new FileSelectorAndUploadWindow(
-				Constants.GENERIC_JOB_LAST_INPUTFILE_URL);
+				GENERIC_JOB_LAST_INPUTFILE_URL);
 		fileSelectorWindow.addValueChangeHandler(this);
 
 		EventBus.get().addHandler(JobSubmissionFinishedEvent.TYPE, this);
@@ -327,7 +330,7 @@ ValueChangeHandler<List<GrisuFileObject>> {
 								String lastVersion = UserEnvironment
 								.getInstance()
 								.getUserProperty(
-										Constants.DEFAULT_VERSION
+										DEFAULT_VERSION
 										+ lastCalculatedExecutable);
 
 								if ((lastVersion != null)
@@ -1021,7 +1024,7 @@ ValueChangeHandler<List<GrisuFileObject>> {
 			try {
 				String wtString = UserEnvironment.getInstance()
 				.getUserProperty(
-						Constants.GENERIC_JOB_LAST_WALLTIME_IN_MINUTES);
+						GENERIC_JOB_LAST_WALLTIME_IN_MINUTES);
 				walltimeInMinutes = Integer.parseInt(wtString);
 				if (walltimeInMinutes > 0) {
 					int days = walltimeInMinutes / (60 * 24);
@@ -1141,7 +1144,7 @@ ValueChangeHandler<List<GrisuFileObject>> {
 											UserEnvironment
 											.getInstance()
 											.setUserProperty(
-													Constants.DEFAULT_VERSION
+													DEFAULT_VERSION
 													+ lastCalculatedExecutable,
 													jobProperties
 													.get(Constants.APPLICATIONVERSION_KEY));

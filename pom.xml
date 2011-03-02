@@ -18,13 +18,13 @@
 		<maven.compiler.target>1.5</maven.compiler.target>
 		<grisu.version>0.3.2</grisu.version>
 	</properties>
-	
+
 	<pluginRepositories>
-       <pluginRepository>
-         <id>gwt-maven</id>
-         <url>http://repo1.maven.org/maven2</url>
-       </pluginRepository>
-    </pluginRepositories>   
+		<pluginRepository>
+			<id>gwt-maven</id>
+			<url>http://repo1.maven.org/maven2</url>
+		</pluginRepository>
+	</pluginRepositories>
 
 	<repositories>
 		<repository>
@@ -101,6 +101,12 @@
 		</dependency>
 
 		<dependency>
+			<artifactId>grid-jcommons</artifactId>
+			<groupId>grisu</groupId>
+			<version>1.2.4</version>
+		</dependency>
+
+		<dependency>
 			<groupId>com.extjs</groupId>
 			<artifactId>gxt</artifactId>
 			<version>${gxt.version}</version>
@@ -120,6 +126,12 @@
 			<version>${grisu.version}</version>
 			<type>jar</type>
 			<scope>compile</scope>
+			<exclusions>
+				<exclusion>
+					<artifactId>grid-jcommons</artifactId>
+					<groupId>grisu</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>grisu</groupId>
@@ -132,6 +144,12 @@
 			<version>${grisu.version}</version>
 			<scope>compile</scope>
 			<type>jar</type>
+			<exclusions>
+				<exclusion>
+					<artifactId>grid-jcommons</artifactId>
+					<groupId>grisu</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>com.googlecode.gwtupload</groupId>
@@ -159,6 +177,12 @@
 			<version>0.3</version>
 			<type>pom</type>
 			<scope>compile</scope>
+			<exclusions>
+				<exclusion>
+					<artifactId>grid-jcommons</artifactId>
+					<groupId>grisu</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 	</dependencies>
 
@@ -216,11 +240,16 @@
 			<!-- </webResources> -->
 			<!-- </configuration> -->
 			<!-- </plugin> -->
-			<!-- If you want to use the target/web.xml file mergewebxml produces, 
-				tell the war plugin to use it. Also, exclude what you want from the final 
-				artifact here. <plugin> <groupId>org.apache.maven.plugins</groupId> <artifactId>maven-war-plugin</artifactId> 
-				<configuration> <webXml>target/web.xml</webXml> <warSourceExcludes>.gwt-tmp/**</warSourceExcludes> 
-				</configuration> </plugin> -->
+			<!--
+				If you want to use the target/web.xml file mergewebxml produces,
+				tell the war plugin to use it. Also, exclude what you want from the
+				final artifact here. <plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId> <configuration>
+				<webXml>target/web.xml</webXml>
+				<warSourceExcludes>.gwt-tmp/**</warSourceExcludes> </configuration>
+				</plugin>
+			-->
 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -240,11 +269,11 @@
 			</plugin>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>tomcat-maven-plugin</artifactId> 
+				<artifactId>tomcat-maven-plugin</artifactId>
 				<version>1.1</version>
 				<configuration>
-				<url>http://bestgridonline.test.auckland.ac.nz/manager/html</url>
-				<server>BestGridServer</server>
+					<url>http://bestgridonline.test.auckland.ac.nz/manager/html</url>
+					<server>BestGridServer</server>
 				</configuration>
 			</plugin>
 		</plugins>

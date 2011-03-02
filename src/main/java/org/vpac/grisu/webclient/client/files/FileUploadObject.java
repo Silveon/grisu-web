@@ -43,7 +43,7 @@ public class FileUploadObject extends FileTransferObject {
 		}
 		
 
-		GrisuClientService.Util.getInstance().uploadFilesToGrid(sources, target.getUrl(), true, new AsyncCallback<HashMap<String,String>>() {
+		GrisuClientService.Util.getInstance().uploadFilesToGrid(sources, target.getUrl(), true, new AsyncCallback<String>() {
 
 			public void onFailure(Throwable arg0) {
 				// TODO Auto-generated method stub
@@ -51,9 +51,9 @@ public class FileUploadObject extends FileTransferObject {
 			}
 
 
-			public void onSuccess(HashMap<String, String> arg0) {
+			public void onSuccess(String arg0) {
 				// TODO Auto-generated method stub
-			//	handle = arg0;
+				handle = arg0;
 				started = true;
 				set(STARTED_KEY, true);
 			}

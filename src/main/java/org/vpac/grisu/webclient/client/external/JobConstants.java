@@ -8,31 +8,29 @@ package org.vpac.grisu.webclient.client.external;
  * 
  */
 public final class JobConstants {
-	
-	private JobConstants() {
-	}
 
 	public static final String REMOTE_FILE_TAGNAME = "File";
+
 	public static final String REMOTE_FOLDER_TAGNAME = "Directory";
 	public static final String LOCAL_FILE_TAGNAME = "File";
 	public static final String LOCAL_FOLDER_TAGNAME = "Folder";
 	public static final String LOCAL_DOCUMENTROOT_TAGNAME = "FileSystem";
-
 	// the DUMMY_START_STRING indicates to grisu that the element is not really
 	// filled,
 	// even when there is a value in the template elements text field
 	public static final String DUMMY_START_STRING = "dummy";
-	public static final String DUMMY_STAGE_FILE = "dummyfile";
 
+	public static final String DUMMY_STAGE_FILE = "dummyfile";
 	public static final int DONT_ACCEPT_NEW_JOB_WITH_EXISTING_JOBNAME = 0;
+
 	public static final int ALWAYS_INCREMENT_JOB_NAME = 1;
 	public static final int ONLY_INCREMENT_JOB_NAME_IF_JOB_EXISTS_WITH_SAME_NAME = 2;
 	public static final int ALWAYS_TIMESTAMP_JOB_NAME = 3;
 	public static final int ONLY_TIMESTAMP_JOB_NAME_IF_JOB_EXISTS_WITH_SAME_NAME = 3;
 	public static final int OVERWRITE_EXISTING_JOB = 10; // not recommended
-
 	// status
 	public static final int LOADING = -1002;
+
 	public static final int NOT_AVAILABLE = -1001;
 	public static final int UNDEFINED = -1000;
 	public static final int JOB_OBJECT_CREATED = -200;
@@ -46,13 +44,14 @@ public final class JobConstants {
 	public static final int PENDING = 0;
 	public static final int ACTIVE = 1;
 	public static final int CLEAN_UP = 101;
+	public static final int BATCH_JOB_FINISHED = 100;
 	public static final int FINISHED_EITHER_WAY = 900;
 	public static final int NO_SUCH_JOB = 997;
 	public static final int KILLED = 998;
 	public static final int FAILED = 999;
 	public static final int DONE = 1000;
-
 	public static final String LOADING_STRING = "Loading...";
+
 	public static final String NOT_AVAILABLE_STRING = "n/a";
 	public static final String UNDEFINED_STRING = "Undefined";
 	public static final String NO_SUCH_JOB_STRING = "No such job";
@@ -71,7 +70,6 @@ public final class JobConstants {
 	public static final String JOB_OBJECT_CREATED_STRING = "Job object created";
 	public static final String INPUT_FILES_UPLOADING_STRING = "Uploading input files";
 	public static final String INPUT_FILES_UPLOADED_STRING = "Input files uploaded";
-
 	public static final String NO_DESCRIPTION_AVAILABLE = "No description available.";
 
 	public static String translateStatus(final int status_no) {
@@ -114,6 +112,9 @@ public final class JobConstants {
 		case INPUT_FILES_UPLOADED:
 			return INPUT_FILES_UPLOADED_STRING;
 		default:
+			if ((status_no > 1) && (status_no <= 100)) {
+				return ACTIVE_STRING + "(" + status_no + " % finished)";
+			}
 			break;
 		}
 
@@ -128,12 +129,22 @@ public final class JobConstants {
 
 		if (DONE_STRING.equals(status)) {
 			return DONE;
-		} else if (status != null && status.indexOf("(") >= 0) {
-			int start = status.indexOf("(") + 11;
-			int end = status.indexOf(")");
-			String errorCodeString = status.substring(start, end);
-			int errorCode = Integer.parseInt(errorCodeString);
-			return DONE + errorCode;
+		} else if ((status != null) && (status.indexOf("(") >= 0)) {
+			final int start = status.indexOf("(") + 11;
+			final int end = status.indexOf(")");
+
+			if (status.contains(ACTIVE_STRING)) {
+				// means running
+				final String percentString = status.substring(start,
+						status.indexOf(" %"));
+				final int percent = Integer.parseInt(percentString);
+				return percent;
+			} else {
+				// means error
+				final String errorCodeString = status.substring(start, end);
+				final int errorCode = Integer.parseInt(errorCodeString);
+				return DONE + errorCode;
+			}
 		} else if (LOADING_STRING.equals(status)) {
 			return LOADING;
 		} else if (NOT_AVAILABLE_STRING.equals(status)) {
@@ -171,6 +182,9 @@ public final class JobConstants {
 		}
 		return UNDEFINED;
 
+	}
+
+	private JobConstants() {
 	}
 
 }

@@ -218,7 +218,7 @@ public class FileSelectorAndUploadWindow extends Window implements
 
 				public void handleEvent(BaseEvent be) {
 				
-					close();
+					hide();
 					
 				}
 			});

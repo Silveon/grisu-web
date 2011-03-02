@@ -73,6 +73,9 @@ public class FileSpaceManager {
 			fo = new GrisuFileObject(convertMountPoint(mp));
 		} else {
 			try {
+				if ( ! si.fileExists(name)) {
+					throw new RuntimeException("File "+name+" does not exist.");
+				}
 				if ( si.isFolder(name) ) {
 					fo = new GrisuFileObject(calculateFileName(name), name, GrisuFileObject.FILETYPE_FOLDER, 0L, null);
 				} else {

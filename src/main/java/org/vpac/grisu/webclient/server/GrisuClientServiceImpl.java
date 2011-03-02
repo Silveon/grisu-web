@@ -20,10 +20,14 @@ import grisu.settings.ServerPropertiesManager;
 import grisu.utils.FileHelpers;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.SortedSet;
@@ -52,7 +56,13 @@ public class GrisuClientServiceImpl extends RemoteServiceServlet implements
 
 	static final Logger myLogger = Logger
 			.getLogger(GrisuClientServiceImpl.class.getName());
-
+	
+	
+	private boolean fileUploadStopRequest;
+	static final String LOCAL_STATUS_HANDLE_PREFIX = "LOCAL_HANDLE_";
+	private int numberOfCurrentUploadTransfers = 0;
+	
+	
 	private ServerConfiguration serverConfiguration = ServerConfiguration
 			.getInstance();
 
@@ -135,11 +145,12 @@ public class GrisuClientServiceImpl extends RemoteServiceServlet implements
 
 		grisu.model.dto.DtoActionStatus status = getServiceInterface()
 				.getActionStatus(handle);
+		
 
 		if (status == null) {
 			status = actionStatus.get(handle);
 		}
-
+		
 		if (status == null) {
 			return null;
 		}
@@ -410,30 +421,69 @@ public class GrisuClientServiceImpl extends RemoteServiceServlet implements
 	
 	 
 
-	public HashMap<String,String> uploadFilesToGrid(List<GrisuFileObject> gfol , String target, boolean overwrite) {
+	public String uploadFilesToGrid(List<GrisuFileObject> gfol , String target, boolean overwrite) {
 		
 		   ServiceInterface serviceInterface = getServiceInterface();
+		   numberOfCurrentUploadTransfers++;
 		   
+		   final String handle = LOCAL_STATUS_HANDLE_PREFIX+numberOfCurrentUploadTransfers;
+		  grisu.model.dto.DtoActionStatus uploadStatus = new grisu.model.dto.DtoActionStatus(handle,gfol.size());
+		   
+		   actionStatus.put(uploadStatus.getHandle(), uploadStatus);
+		   
+		   File file  = new File(gfol.get(0).getUrl());
+		   fileUploadStopRequest = false;
+		   final List<GrisuFileObject> gfolCopy = gfol;
+		   final boolean overwritecopy = overwrite;
+		   final String targetCopy = target;
+        final FileManager fm = GrisuRegistryManager.getDefault(serviceInterface).getFileManager();
+ 	
+	        Thread uploadThread = new Thread(new Runnable() {
+				
+			
+				
+				public void run() {
+					// TODO Auto-generated method stub
+					Iterator<GrisuFileObject> iterator = gfolCopy.iterator();
+					grisu.model.dto.DtoActionStatus status = actionStatus.get(handle);
+					int fileNO = 0;   
+					while(!getFileUploadStopRequest() && iterator.hasNext())
+				         {
+						   fileNO++;
+						   GrisuFileObject gfo = iterator.next();
+						   
+						   File file = new File(gfo.getUrl());
+						   status.setCurrentElements(fileNO);
+				        try {
+				        	
+				        	
+				        	fm.uploadFile(file, targetCopy, overwritecopy);
+				        	status.addLogMessage("File " + file.getName() + " Uploaded Successfully");
+				        	
+				    	} 
+				        catch (FileTransactionException e) {
+							// TODO Auto-generated catch block
+							myLogger.error("Error uploding file to Grid "  + e.getMessage());
+							status.addLogMessage("Error uploding file "+file.getName()+" to Grid "  + e.getMessage());
+						}}
+					
+					status.setFinished(true);
+					
+				}});
+			
+				
+				uploadThread.start();
 		
-	         FileManager fm = GrisuRegistryManager.getDefault(serviceInterface).getFileManager();
-	         HashMap<String,String> failedFilesMap = new HashMap<String,String>();
-	         for(GrisuFileObject gfo : gfol)
-	         {
-	        try {
-	        	
-	        	File file  = new File(gfo.getUrl());
-	        	
-				fm.uploadFile(file, target+gfo.getFileName(), overwrite);
-				
-				
-			} 
-	        catch (FileTransactionException e) {
-				// TODO Auto-generated catch block
-				myLogger.error("Error uploding file to Grid "  + e.getMessage());
-				failedFilesMap.put(gfo.getFileName(), e.getMessage());
-				
-			}}
-	        return failedFilesMap;
+	        return handle;
 	}
 
+	protected boolean getFileUploadStopRequest() {
+		// TODO Auto-generated method stub
+		return fileUploadStopRequest;
+	}
+
+	private void addErrorToLocalFileActionStatus()
+	{
+		
+	}
 }

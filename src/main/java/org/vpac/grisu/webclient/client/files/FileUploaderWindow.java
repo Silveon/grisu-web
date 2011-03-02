@@ -49,6 +49,9 @@ public class FileUploaderWindow extends Window  {
 		public void componentSelected(ButtonEvent ce) {
 
 			beginTransferToGrid();
+			getFileuploadPanel().reset();
+			hide();
+			
 		}
 
 	
@@ -184,7 +187,7 @@ private Button getHidebutton() {
 	public void beginTransferToGrid()
 	{
 		
-			FileTransferObject fto = new FileTransferObject(getFileuploadPanel().getSelectedItems(),new GrisuFileObject(targetURL,targetURL,GrisuFileObject.FILETYPE_FOLDER,new Long(-1),null ));
+			FileUploadObject fto = new FileUploadObject(getFileuploadPanel().getSelectedItems(),new GrisuFileObject(targetURL,targetURL,GrisuFileObject.FILETYPE_FOLDER,new Long(-1),null ));
 			if(fto.startTransfer())
 			{
 				Info.display("Beginging Transfer ", "Transfer to grid has successfully started");
