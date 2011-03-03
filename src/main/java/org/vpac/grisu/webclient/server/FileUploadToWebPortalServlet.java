@@ -71,7 +71,7 @@ public class FileUploadToWebPortalServlet extends UploadAction {
         	  myLogger.debug("Creating user temp Directory" + fileDirectory.getAbsolutePath());
           }
           /// Create a temporary file placed in /tmp (only works in unix)
-          File file = File.createTempFile("upload-", ".bin",fileDirectory);
+          File file = new File(fileDirectory.toURI().getPath()+item.getName());
           item.write(file);
           
           myLogger.debug("Finished uploading file " + item.getContentType());

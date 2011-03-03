@@ -35,12 +35,12 @@ public class FileUploaderWindow extends Window  {
 	
 	private TabPanel tabPanel;
 	private TabItem tbtmUploadFile;
-	private TabItem tbtmRedyFiles;
 	private ContentPanel uploadFileContentPanel;
-	private ContentPanel uploadRedyToBeSentContentPanel;
 	private FileUploadPanel fileUploadPanel;
 	private Button beginTransferButton;
 	private Button hideButton;
+	private String targetURL;
+	
 	
 	
 	private SelectionListener<ButtonEvent> uploaderButtonListener = new SelectionListener<ButtonEvent>() {
@@ -58,10 +58,7 @@ public class FileUploaderWindow extends Window  {
 	};
 	
 	
-	private String targetURL;
-	private FileUploadSelectorGridPanel fileUploadSelectorPanel;
-	private FileUpload fileUpload;
-	private FormPanel formPanel;
+	
 
 	public FileUploaderWindow()
 	{

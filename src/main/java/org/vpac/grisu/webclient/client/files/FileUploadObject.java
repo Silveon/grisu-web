@@ -1,13 +1,10 @@
 package org.vpac.grisu.webclient.client.files;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+
 import java.util.List;
 
 import org.vpac.grisu.webclient.client.EventBus;
 import org.vpac.grisu.webclient.client.GrisuClientService;
-import org.vpac.grisu.webclient.server.GrisuClientServiceImpl;
-
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class FileUploadObject extends FileTransferObject {

@@ -21,4 +21,6 @@
   <entry key="LanyardURL">https://lanyard.bestgrid.org/proxyparser/request.html</entry>
 	<entry key="TemporyFileStorageDir">/tmp/grisu/</entry>
 	
+	<entry key="HomeURL">https://bestgridonline.test.auckland.ac.nz</entry>
+	
 </properties>

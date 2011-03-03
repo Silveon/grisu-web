@@ -32,6 +32,9 @@ public interface GrisuClientService extends RemoteService {
 		}
 	}
 
+	
+	public String logout();
+	
 	public String uploadFilesToGrid(List<GrisuFileObject> gfol ,String targetURL,boolean overwrite);
 	
 	public String cp(List<String> sources, String target);
@@ -67,5 +70,9 @@ public interface GrisuClientService extends RemoteService {
 	public void setUserProperty(String key, String value);
 
 	public void submitJob(Map<String, String> jobProperties) throws JobCreationException;
+	
+	public String getDN();
+	
+	public String getCN();
 
 }

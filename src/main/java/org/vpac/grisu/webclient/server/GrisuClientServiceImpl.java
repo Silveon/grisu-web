@@ -16,13 +16,11 @@ import grisu.model.dto.DtoJobs;
 import grisu.model.dto.DtoStringList;
 import grisu.model.job.JobSubmissionObjectImpl;
 import grisu.settings.Environment;
-import grisu.settings.ServerPropertiesManager;
 import grisu.utils.FileHelpers;
 
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -31,9 +29,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.SortedSet;
+import java.util.StringTokenizer;
 import java.util.TreeSet;
 
-import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import javax.activation.MimetypesFileTypeMap;
 import javax.servlet.http.HttpSession;
@@ -42,6 +40,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.dozer.DozerBeanMapper;
 import org.dozer.Mapper;
+import org.opensaml.MalformedException;
 import org.vpac.grisu.webclient.client.GrisuClientService;
 import org.vpac.grisu.webclient.client.exceptions.LoginException;
 import org.vpac.grisu.webclient.client.files.GrisuFileObject;
@@ -58,9 +57,10 @@ public class GrisuClientServiceImpl extends RemoteServiceServlet implements
 			.getLogger(GrisuClientServiceImpl.class.getName());
 	
 	
-	private boolean fileUploadStopRequest;
+	private boolean fileUploadStopRequest =false;
 	static final String LOCAL_STATUS_HANDLE_PREFIX = "LOCAL_HANDLE_";
 	private int numberOfCurrentUploadTransfers = 0;
+	private final String SERVICE_INTERFACE_ATTRIBUTE_NAME = "serviceInterface";
 	
 	
 	private ServerConfiguration serverConfiguration = ServerConfiguration
@@ -449,10 +449,21 @@ public class GrisuClientServiceImpl extends RemoteServiceServlet implements
 					int fileNO = 0;   
 					while(!getFileUploadStopRequest() && iterator.hasNext())
 				         {
+							
 						   fileNO++;
 						   GrisuFileObject gfo = iterator.next();
+						   System.out.println("Trandfering " + gfo.getUrl() );
+						  URI uri = null;
+						   try {
+							 uri = new URI(gfo.getUrl());
+						} 	catch (URISyntaxException e1) {
+							// TODO Auto-generated catch block
+							throwError(e1);
+						}	
+						   File file = new File(uri);
 						   
-						   File file = new File(gfo.getUrl());
+						   System.out.println("File is " + file.isFile() +" and read "+ file.canRead());
+						   
 						   status.setCurrentElements(fileNO);
 				        try {
 				        	
@@ -463,6 +474,7 @@ public class GrisuClientServiceImpl extends RemoteServiceServlet implements
 				    	} 
 				        catch (FileTransactionException e) {
 							// TODO Auto-generated catch block
+				        	throwError(e);
 							myLogger.error("Error uploding file to Grid "  + e.getMessage());
 							status.addLogMessage("Error uploding file "+file.getName()+" to Grid "  + e.getMessage());
 						}}
@@ -482,8 +494,52 @@ public class GrisuClientServiceImpl extends RemoteServiceServlet implements
 		return fileUploadStopRequest;
 	}
 
-	private void addErrorToLocalFileActionStatus()
+	
+	private void throwError(Exception e)
 	{
-		
+		throw new RuntimeException(e);
 	}
+
+
+	public String logout() {
+		// TODO Auto-generated method stub
+		ServiceInterface si = getServiceInterface();
+		si.logout();
+		getSession().removeAttribute(SERVICE_INTERFACE_ATTRIBUTE_NAME);
+		return serverConfiguration.getConfiguration(ServerConfiguration.HOME_URL);
+	}
+
+	public String getDN() {
+		// TODO Auto-generated method stub
+		
+		return getServiceInterface().getDN();
+	}
+	
+	public String getCN()
+	{
+		String dn = getDN();
+			  StringTokenizer tokenizer = new StringTokenizer(dn,",");
+			    String st1 = "";
+			    while(tokenizer.hasMoreTokens())
+			            {
+
+			            String st = tokenizer.nextToken();
+			            if(st.startsWith("CN"))
+			            {
+			                 String newString = st.substring(3);
+			 
+			                StringTokenizer tokenizer1 = new StringTokenizer(newString," ");
+			                st1 ="";
+			                int x =tokenizer1.countTokens();
+			                for(int i = 1; i < x ;i++)
+			                {
+			                    st1+=tokenizer1.nextToken()+" ";
+			                }
+			            }
+			        }
+			    
+
+			    return st1.trim();
+	}
+	
 }

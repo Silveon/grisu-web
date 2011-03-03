@@ -27,6 +27,7 @@ public class ServerConfiguration {
  public static final String URL_PARAMETER_NAME = "URLParameterName";
  public static final String LANYARD_URL = "LanyardURL";
  public static final String TEMP_FILE_STORAGE_DIR = "TemporyFileStorageDir";
+ public static final String HOME_URL = "HomeURL";
  
  private Properties properties;
  static final Logger myLogger = Logger.getLogger(ServerConfiguration.class

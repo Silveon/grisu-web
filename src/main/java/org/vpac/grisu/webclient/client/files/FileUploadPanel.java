@@ -45,7 +45,6 @@ public class FileUploadPanel extends LayoutContainer implements HasHandlers
 	private HashMap<String, GrisuFileObject> uploadedFilesMap;
 	private UploadFilePanelType uploadPanelType;
 	
-	private SimpleEventBus handleManager;
 	
 	
 	
@@ -56,7 +55,7 @@ public class FileUploadPanel extends LayoutContainer implements HasHandlers
 		uploadedFilesMap = new HashMap<String, GrisuFileObject>();
 		this.uploadPanelType = uploadPanelType;
 		setLayout(new RowLayout(Orientation.VERTICAL));
-		add(getMultiUploader(), new RowData(1.0, 1.0, new Margins()));
+		add(getMultiUploader(), new RowData(450.0, 300.0, new Margins()));
 		// add(getFileUploadModule(), new RowData(1.0, 1.0, new Margins()));
 		multiUploader.setEnabled(true);
 		
@@ -81,6 +80,8 @@ public class FileUploadPanel extends LayoutContainer implements HasHandlers
 	public void reset()
 	{
 		multiUploader.reset();
+		uploadedFilesMap.clear();
+		
 	}
 	
 	
@@ -124,7 +125,9 @@ public class FileUploadPanel extends LayoutContainer implements HasHandlers
 				GWT.log("Response Document "  + doc);
 				
 				String size = Utils.getXmlNodeValue(doc, "size");
-				String type = Utils.getXmlNodeValue(doc, "type");
+				//
+				//String type = Utils.getXmlNodeValue(doc, "type");
+				//
 				String fileName = Utils.getXmlNodeValue(doc, "name");
 				String localfileURI = Utils.getXmlNodeValue(doc,"message");
 				
